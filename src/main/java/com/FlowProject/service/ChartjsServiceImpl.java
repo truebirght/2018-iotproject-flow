@@ -11,12 +11,12 @@ import be.ceau.chart.dataset.BarDataset;
 @Service
 public class ChartjsServiceImpl implements ChartjsService {
 	
-	public String chartToJson(List arr1, List arr2) {
+	public String chartToJson() {
 		BarDataset dataset = new BarDataset()
 				.setLabel("월별 사용량")
-				.setData(arr1)
+				.setData()
 				.addBackgroundColors(Color.LIGHT_BLUE)
-				.setData(arr2)
+				.setData()
 				.addBackgroundColors(Color.BLUE)
 				.setBorderWidth(2);
 	
