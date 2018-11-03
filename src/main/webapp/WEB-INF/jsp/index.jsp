@@ -11,6 +11,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
 <!-- Chartjs -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+<script type="text/javascript" src="/resources/js/Chart.roundedBarCharts.min.js"></script>
 <script src="https://cdn3.devexpress.com/jslib/18.1.6/js/dx.all.js" integrity="sha384-f8Cq8uEDm21R8+MKf8MuiefjIrLboOVKaP7zxk96z5s6gXMHZ04U2RKdHrsu3WGg sha512-YEEIPZTk1Gkw4WCq1c25EqVxocCj4GFsOnzPnHAR3zm4jiAefQ8dBM48ypb+6BW/sb+9qFa5ljX+AYOnMrFbEA==" crossorigin="anonymous"></script>
 <script type="text/javascript" src="/resources/js/moment.js"></script>
 
@@ -40,6 +41,9 @@
 <link href="/resources/css/index.css" rel="stylesheet" type="text/css">
 <link rel="shortcut icon" href="/resources/img/favicon.png">
 
+
+<style>
+</style>
 </head>
 <body class="m-page--boxed m-body--fixed m-header--static m-aside--offcanvas-default">
 	<div class="m-grid m-grid--hor m-grid--root m-page">
@@ -54,19 +58,22 @@
 								<a class="m-brand__logo-wrapper"> <img alt="" src="/resources/img/logo.png"> <span id="logoText">&nbsp;Flow 온라인 수도 검침</span>
 								</a>
 							</div>
-							<div class="m-stack__item m-stack__item--middle m-brand__tools">
+						</div>
+					</div>
 
-								<a id="m_aside_header_menu_mobile_toggle" href="javascript:;" class="m-brand__icon m-brand__toggler m--visible-tablet-and-mobile-inline-block"> <span></span>
-								</a>
-								<a id="m_aside_header_topbar_mobile_toggle" href="javascript:;" class="m-brand__icon m--visible-tablet-and-mobile-inline-block"> <i class="flaticon-more"></i>
-								</a>
-							</div>
+
+					<div class="m-grid__item m-grid__item--fluid m-header-head" id="m_header_nav">
+						<div class="m-stack__item m-topbar__nav-wrapper">
+							<button id="btnLogout" class="btn btn-primary m-btn m-btn--icon m-btn--wide m-btn--air m-btn--custom">
+								<span> <i class="la la-mail-reply"></i> <span>Logout</span>
+								</span>
+							</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</header>
-		
+
 		<div class="m-grid__item m-grid__item--fluid m-grid m-grid m-grid--hor m-container m-container--responsive m-container--xxl">
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--hor-desktop m-grid--desktop m-body">
 				<div class="m-grid__item m-body__nav">
@@ -82,7 +89,7 @@
 									</span>
 								</div>
 							</form>
-							
+
 							<div class="m-dropdown__wrapper" style="z-index: 101;">
 								<div class="m-dropdown__inner">
 									<div class="m-dropdown__body">
@@ -98,16 +105,16 @@
 									</div>
 								</div>
 							</div>
-							
+
 						</div>
 					</div>
 				</div>
 
 				<div class="m-grid__item m-grid__item--fluid m-grid m-grid--desktop m-grid--ver-desktop m-body__content">
-				
+
 					<div class="m-grid__item m-grid__item--fluid m-wrapper">
-					
-						<div class="m-subheader ">
+
+						<div class="m-subheader">
 							<div class="d-flex align-items-center">
 								<div class="mr-auto">
 									<h3 class="m-subheader__title ">사용량 그래프</h3>
@@ -120,45 +127,38 @@
 								</div>
 							</div>
 						</div>
-						
+
 						<div class="m-content">
-						
+
 							<div class="m-portlet">
 								<div class="m-portlet__body  m-portlet__body--no-padding">
 									<div class="row m-row--no-padding m-row--col-separator-xl">
-										<div class="col-xl-6">
+										<div class="col-xl-12">
 											<div class="m-widget14">
 												<div class="m-widget14__header m--margin-bottom-30">
-													<h3 class="m-widget14__title">연별 수도 사용량</h3>
+													<h3 class="m-widget14__title">일별 수도 사용량</h3>
 												</div>
-												<canvas id="yearlyChart"></canvas>
-											</div>
-										</div>
-										<div class="col-xl-6">
-											<div class="m-widget14">
-												<div class="m-widget14__header m--margin-bottom-30">
-													<h3 class="m-widget14__title">월별 수도 사용량</h3>
-												</div>
-												<canvas id="monthlyChart"></canvas>
+												<canvas id="dailyChart"></canvas>
+
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="row">
 								<div class="col-xl-12">
 									<div class="m-portlet m-portlet--full-height m-portlet--skin-light m-portlet--fit  m-portlet--rounded">
 										<div class="m-widget14">
 											<div class="m-widget14__header m--margin-bottom-30">
-												<h3 class="m-widget14__title">일별 수도 사용량</h3>
+												<h3 class="m-widget14__title">선택 수도 사용량</h3>
 											</div>
-											<canvas id="dailyChart"></canvas>
+											<canvas id="selectChart"></canvas>
 										</div>
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="row">
 								<div class="col-xl-12">
 									<div class="m-portlet m-portlet--full-height m-portlet--skin-light m-portlet--fit  m-portlet--rounded">
@@ -171,13 +171,13 @@
 									</div>
 								</div>
 							</div>
-							
+
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		
+
 		<footer class="m-grid__item m-footer">
 			<div class="m-container m-container--responsive m-container--xxl">
 
@@ -192,27 +192,30 @@
 			</div>
 		</footer>
 	</div>
-<script charset='utf-8'>
+
+	<script charset='utf-8'>
 var today = new Date();
 var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
 var dayList = [];
 for(i = 1; i <= getDay; i++) { dayList.push(i+'일'); }
 $('#printDate').text(moment(today).format("MMM") + ' ' + today.getDate());
-	var ctx1 = $('#yearlyChart');
+
+	var ctx1 = $('#selectChart');
 	var yearlyChart = new Chart(ctx1, {
 		type: 'bar',
 		data: {
-			labels: ['2017년', '2018년'],
+			labels: ['2018년'],
 		    datasets: [
 		    	{
 		          label: "연별 사용량",
 		          backgroundColor: ['#3cba9f', '#3e95cd'],
 		          borderWidth: 1,
-		          data: ${yearTotal}
+		          data: ${thisYearMonthlyData}
 		        }
 		      ]
 		    },
 		options: {
+			cornerRadius: 20,
 			responsive: true,
             legend: {
                // onClick: (e) => e.stopPropagation()
@@ -237,48 +240,12 @@ $('#printDate').text(moment(today).format("MMM") + ' ' + today.getDate());
 		}
 	});
 	
-	var ctx2 = $('#monthlyChart');
-	var monthlyChart = new Chart(ctx2, {
-		type: 'line',
-		data: {
-			labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-			datasets: [{
-				label: '작년 사용량',
-				data: ${lastYearData},
-				borderColor: "#3cba9f",
-				fill: false
-			},
-			{
-				label: '올해 사용량',
-				data: ${thisYearData},
-				borderColor: "#3e95cd",
-				fill: false
-			}]
-		},
-		options: {
-			responsive: true,
-			barRoundness: 0,
-			title: {
-                display: false
-            },
-            legend: {
-               // onClick: (e) => e.stopPropagation()
-            	display: true
-            }
-		}
-	});
-	
-	var ctx3 = $('#dailyChart');
-	var dailyChart = new Chart(ctx3, {
+	var ctx2 = $('#dailyChart');
+	var dailyChart = new Chart(ctx2, {
 		type: 'line',
 		data: {
 			labels: dayList,
-			datasets: [{
-				label: '작년 사용량',
-				data: ${lastYearMonthlyData},
-				borderColor: "#3cba9f",
-				fill: false
-			},
+			datasets: [
 			{
 				label: '올해 사용량',
 				data: ${thisYearMonthlyData},
@@ -325,6 +292,67 @@ $('#printDate').text(moment(today).format("MMM") + ' ' + today.getDate());
 		},
 		value: 45,
 	});
+</script>
+
+	<script src="/resources/js/vendors.bundle.js" type="text/javascript"></script>
+	<script src="/resources/js/scripts.bundle.js" type="text/javascript"></script>
+	<script src="/resources/js/fullcalendar.bundle.js" type="text/javascript"></script>
+	<script src="/resources/js/dashboard.js" type="text/javascript"></script>
+	<!-- firebase SDK ë§í¬ -->
+	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
+	<script>
+	// Initialize Firebase
+	/* 파이어 베이스 연결 정보 */
+	var url = "/?port=";
+	var config = {
+	  apiKey: "AIzaSyAUsfzFxB0EXOMvHPO9JWUeiWWsvlLme5c",
+	  authDomain: "liters-aaa.firebaseapp.com",
+	  databaseURL: "https://liters-aaa.firebaseio.com",
+	  projectId: "liters-aaa",
+	  storageBucket: "liters-aaa.appspot.com",
+	  messagingSenderId: "257203396435"
+	};
+	firebase.initializeApp(config);
+</script>
+
+	<script>
+/* 로그아웃 버튼 클릭시 */
+ * 
+ */
+$('#btnLogout').click(function(){
+	firebase.auth().signOut().then(function(){
+		location.href = "login";
+	},function(error){
+		alert("로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
+	})
+});
+
+/* 인증 상태 변화 감시하기 */
+var url = "/?port=";
+firebase.auth().onAuthStateChanged(function(user) {
+	if (user) { // 인증되었을 때
+		 url += user.displayName;
+	} else {
+		location.href = "login";
+	}
+});
+
+$(document).ready(function(){
+	$('.applyBtn').click(function() {
+		startDate = $('[name="daterangepicker_start"]').val();
+		endDate = $('[name="daterangepicker_end"]').val();
+		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
+	});
+	
+	$('[data-range-key="Today"], [data-range-key="Yesterday"], [data-range-key="Last 7 Days"], [data-range-key="This Month"], [data-range-key="Last Month"]').click(function() {
+		startDate = $('[name="daterangepicker_start"]').val();
+		endDate = $('[name="daterangepicker_end"]').val();
+		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
+	});
+			
+});
 </script>
 </body>
 </html>
