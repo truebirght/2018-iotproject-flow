@@ -14,9 +14,9 @@ public class ChartjsServiceImpl implements ChartjsService {
 	public String chartToJson() {
 		BarDataset dataset = new BarDataset()
 				.setLabel("월별 사용량")
-				.setData()
+				.setData(0)
 				.addBackgroundColors(Color.LIGHT_BLUE)
-				.setData()
+				.setData(0)
 				.addBackgroundColors(Color.BLUE)
 				.setBorderWidth(2);
 	
