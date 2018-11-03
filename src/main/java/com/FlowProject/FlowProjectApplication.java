@@ -16,17 +16,5 @@ public class FlowProjectApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FlowProjectApplication.class, args);
 	}
-	
-	 @Bean
-	    public CacheManager cacheManager() {
-	        return new EhCacheCacheManager(ehCacheCacheManager().getObject());
-	    }
 
-	    @Bean
-	    public EhCacheManagerFactoryBean ehCacheCacheManager() {
-	        EhCacheManagerFactoryBean factory = new EhCacheManagerFactoryBean();
-	        factory.setConfigLocation(new ClassPathResource("/xml/ehcache.xml"));
-	        factory.setShared(true);
-	        return factory;
-	    }
 }

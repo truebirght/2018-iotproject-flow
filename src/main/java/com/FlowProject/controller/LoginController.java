@@ -16,13 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import com.FlowProject.service.ChartjsService;
-import com.FlowProject.service.FirebaseService;
 @Controller
 public class LoginController {
-	
-	@Autowired
-	FirebaseService fs;
-	
 	@Autowired
 	ChartjsService cs;
 	
@@ -65,15 +60,15 @@ public class LoginController {
 		}	
 		// 특정 날짜 데이터 그리기
 		else if (startDate == null) {
-			nowYear = Integer.parseInt((endDate.split("/")[2]));
-			nowMonth = Integer.parseInt((endDate.split("/")[0]));
+			nowYear = Integer.parseInt((endDate.split("/")[0]));
+			nowMonth = Integer.parseInt((endDate.split("/")[2]));
 		}
 		// 시작 ~ 끝 기간 데이터 그리기
 		else {
-			nowYear = Integer.parseInt((endDate.split("/")[2]));
-			nowMonth = Integer.parseInt((endDate.split("/")[0]));
-			lastYear = Integer.parseInt((startDate.split("/")[2]));
-			lastMonth = Integer.parseInt((startDate.split("/")[0]));
+			nowYear = Integer.parseInt((endDate.split("/")[0]));
+			nowMonth = Integer.parseInt((endDate.split("/")[2]));
+			lastYear = Integer.parseInt((startDate.split("/")[0]));
+			lastMonth = Integer.parseInt((startDate.split("/")[2]));
 		}
 
 		// 년 별
@@ -90,7 +85,8 @@ public class LoginController {
 	     */
 //	    List<Integer> yearTotal = new ArrayList<Integer>();
 	    model.addAttribute("thisYearMonthlyData", thisYearMonthlyData);
-	    
+	    model.addAttribute("startDate", startDate);
+	    model.addAttribute("endtDate", endDate);
 	    return "index";
 	}
 }

@@ -85,10 +85,7 @@
 	   
 	 if (user) { // 인증되었을 때
 		 URL += user.displayName;
-	 	 location.href = URL;
-	 }
-	 else { // 인증되지 않았을 때
-		 location.href = "login";
+	 	 location.href = URL;
 	 }
    });
    

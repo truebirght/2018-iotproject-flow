@@ -60,16 +60,6 @@
 							</div>
 						</div>
 					</div>
-
-
-					<div class="m-grid__item m-grid__item--fluid m-header-head" id="m_header_nav">
-						<div class="m-stack__item m-topbar__nav-wrapper">
-							<button id="btnLogout" class="btn btn-primary m-btn m-btn--icon m-btn--wide m-btn--air m-btn--custom">
-								<span> <i class="la la-mail-reply"></i> <span>Logout</span>
-								</span>
-							</button>
-						</div>
-					</div>
 				</div>
 			</div>
 		</header>
@@ -194,20 +184,18 @@
 	</div>
 
 	<script charset='utf-8'>
-var today = new Date();
-var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
-var dayList = [];
-for(i = 1; i <= getDay; i++) { dayList.push(i+'일'); }
-$('#printDate').text(moment(today).format("MMM") + ' ' + today.getDate());
+	var getStartDate = ${startDate}.split('/')[0] + '년';
+	var getEndDate = ${endDate}.split('/')[0] + '년';
+	
 
 	var ctx1 = $('#selectChart');
-	var yearlyChart = new Chart(ctx1, {
+	var selectChart = new Chart(ctx1, {
 		type: 'bar',
 		data: {
-			labels: ['2018년'],
+			labels: [getStartDate],
 		    datasets: [
 		    	{
-		          label: "연별 사용량",
+		          label: "선택 사용량",
 		          backgroundColor: ['#3cba9f', '#3e95cd'],
 		          borderWidth: 1,
 		          data: ${thisYearMonthlyData}
@@ -298,7 +286,7 @@ $('#printDate').text(moment(today).format("MMM") + ' ' + today.getDate());
 	<script src="/resources/js/scripts.bundle.js" type="text/javascript"></script>
 	<script src="/resources/js/fullcalendar.bundle.js" type="text/javascript"></script>
 	<script src="/resources/js/dashboard.js" type="text/javascript"></script>
-	<!-- firebase SDK ë§í¬ -->
+	<!-- firebase SDK e§?i?￢ -->
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
@@ -319,8 +307,6 @@ $('#printDate').text(moment(today).format("MMM") + ' ' + today.getDate());
 
 	<script>
 /* 로그아웃 버튼 클릭시 */
- * 
- */
 $('#btnLogout').click(function(){
 	firebase.auth().signOut().then(function(){
 		location.href = "login";
@@ -334,7 +320,7 @@ var url = "/?port=";
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) { // 인증되었을 때
 		 url += user.displayName;
-	} else {
+	} else {
 		location.href = "login";
 	}
 });
@@ -346,9 +332,10 @@ $(document).ready(function(){
 		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
 	});
 	
-	$('[data-range-key="Today"], [data-range-key="Yesterday"], [data-range-key="Last 7 Days"], [data-range-key="This Month"], [data-range-key="Last Month"]').click(function() {
+	$('[data-range-key="Last Month"], [data-range-key="Last Year"]').click(function() {
 		startDate = $('[name="daterangepicker_start"]').val();
 		endDate = $('[name="daterangepicker_end"]').val();
+		alert(endDate + '\n' + startDate);
 		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
 	});
 			
