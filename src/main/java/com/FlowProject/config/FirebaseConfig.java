@@ -24,18 +24,11 @@ public class FirebaseConfig {
 	
 	public void initFireBaseApp() throws FileNotFoundException, IOException {
 		if (FirebaseApp.getApps().isEmpty()) {
-			
-			//logger.info(env.getProperty("server.port"));
-			
-			FileInputStream serviceAccount = new FileInputStream(
-												new ClassPathResource("json/caramel-hallway-150401-firebase-adminsdk-qk14x-0aef4ea305.json").getFile());
-			
-			
-			
 			FirebaseOptions options = new FirebaseOptions.Builder()
-										.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+										.setCredentials(GoogleCredentials.fromStream(
+												new ClassPathResource("json/caramel-hallway-150401-firebase-adminsdk-qk14x-0aef4ea305.json")
+												.getInputStream()))
 										.setDatabaseUrl("https://caramel-hallway-150401.firebaseio.com/").build();
-			// https://flow-3191.firebaseio.com/ - 정욱이형 URL
 			FirebaseApp.initializeApp(options);
 		}
 	}
