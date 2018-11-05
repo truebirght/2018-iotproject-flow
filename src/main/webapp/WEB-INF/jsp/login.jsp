@@ -66,25 +66,29 @@
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
 	<script>
-	// Initialize Firebase
-	var config = {
-	  apiKey: "AIzaSyAUsfzFxB0EXOMvHPO9JWUeiWWsvlLme5c",
-	  authDomain: "liters-aaa.firebaseapp.com",
-	  databaseURL: "https://liters-aaa.firebaseio.com",
-	  projectId: "liters-aaa",
-	  storageBucket: "liters-aaa.appspot.com",
-	  messagingSenderId: "257203396435"
-	};
-	firebase.initializeApp(config);
-  </script>
+	  // Initialize Firebase
+	  var config = {
+	    apiKey: "AIzaSyAFW0hE15CrQtjBrW-c6jFR6f79OwYqL00",
+	    authDomain: "flow-3191.firebaseapp.com",
+	    databaseURL: "https://flow-3191.firebaseio.com",
+	    projectId: "flow-3191",
+	    storageBucket: "flow-3191.appspot.com",
+	    messagingSenderId: "272459175294"
+	  };
+	  firebase.initializeApp(config);
+	</script>
 	<script type="text/javascript">
 	/* 인증 상태 변화 감시하기 */
 	
 	var URL = "/?port=";
+	var today = new Date();
+	var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
+	var date = today.getFullYear() + '/' + (today.getMonth() + 1) + '/';
+	
     firebase.auth().onAuthStateChanged(function(user) {
 	   
 	 if (user) { // 인증되었을 때
-		 URL += user.displayName;
+		 URL += user.displayName + '&startDate=' + date + '01&endDate=' + date + getDay;
 	 	 location.href = URL;
 	 }
    });

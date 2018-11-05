@@ -1,25 +1,23 @@
 package com.FlowProject.controller;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-
-import com.FlowProject.service.ChartjsService;
 @Controller
 public class LoginController {
-	@Autowired
-	ChartjsService cs;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -43,50 +41,41 @@ public class LoginController {
 		// date format = mm/dd/yy
 		
 		RestTemplate template = new RestTemplate();
-		int nowYear = 0;
-		int nowMonth = 0;
-		int lastYear = 0;
-		int lastMonth = 0;
-		
-		// 로그인 후 첫 메인화면
-		if (endDate == null) {
-			if (startDate == null) {
-				lastYear = YearMonth.now().getYear() - 1;
-				lastMonth = YearMonth.now().getMonthValue();
-			}
-			
-			nowYear = YearMonth.now().getYear();
-			nowMonth = YearMonth.now().getMonthValue();
-		}	
-		// 특정 날짜 데이터 그리기
-		else if (startDate == null) {
-			nowYear = Integer.parseInt((endDate.split("/")[0]));
-			nowMonth = Integer.parseInt((endDate.split("/")[2]));
-		}
-		// 시작 ~ 끝 기간 데이터 그리기
-		else {
-			nowYear = Integer.parseInt((endDate.split("/")[0]));
-			nowMonth = Integer.parseInt((endDate.split("/")[2]));
-			lastYear = Integer.parseInt((startDate.split("/")[0]));
-			lastMonth = Integer.parseInt((startDate.split("/")[2]));
-		}
 
-		// 년 별
-//		List<Integer> lastYearData = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/yearLitter?port=18&date=" + lastYear, List.class);
-//	    List<Integer> thisYearData = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/yearLitter?port=18&date=" + nowYear, List.class);
+		if (port == null || port.equals("")) { return "login"; }
+		// 로그인 후 첫 메인화면
+		YearMonth day = YearMonth.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+		String firstDay = day.atDay(1).format(formatter).toString();
+		String lastDay = day.atEndOfMonth().format(formatter).toString();
+		
+		List<Integer> thisYearMonthlyData = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeLitter?port=" + port + 
+				"&startDate=" + firstDay + "&endDate=" + lastDay, List.class);
+		
+		List<Integer> selectDateData = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeLitter?port=" + port + 	
+				"&startDate=" + startDate + "&endDate=" + endDate, List.class);
+		
+		LocalDate startDateLD = LocalDate.parse(startDate, formatter);
+		LocalDate endDateLD = LocalDate.parse(endDate, formatter);
+		
+		Period period = Period.between(startDateLD, endDateLD);
+		List<String> selectDateList = Stream.iterate(startDateLD, date -> date.plusDays(1))
+				.map(date -> "'" + date.format(formatter2) + "'")
+				.limit(period.getDays() + 1)
+				.collect(Collectors.toList());
+		
+	    TreeSet<String> dateList = new TreeSet<String>();
+	    dateList.add(startDate);
+	    dateList.add(endDate);
 	    
-	    // 월 별
-//	    List<Integer> lastYearMonthlyData = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/monthLitter?port=18&date=" + lastYear + '/' + lastMonth , List.class);
-	    List<Integer> thisYearMonthlyData = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/monthLitter?port=18&date=" + nowYear + '/' + nowMonth, List.class);
-	    
-	    // 기간
-	    /*
-	     
-	     */
-//	    List<Integer> yearTotal = new ArrayList<Integer>();
 	    model.addAttribute("thisYearMonthlyData", thisYearMonthlyData);
-	    model.addAttribute("startDate", startDate);
-	    model.addAttribute("endtDate", endDate);
+	    model.addAttribute("selectDateData", selectDateData);
+	    model.addAttribute("selectDateList", selectDateList);
+	    model.addAttribute("dateList", dateList);
 	    return "index";
 	}
+	
+	
+	
 }

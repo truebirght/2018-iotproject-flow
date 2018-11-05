@@ -43,6 +43,9 @@
 
 
 <style>
+	#hiddenDiv {
+		display: none;
+	}
 </style>
 </head>
 <body class="m-page--boxed m-body--fixed m-header--static m-aside--offcanvas-default">
@@ -128,7 +131,10 @@
 												<div class="m-widget14__header m--margin-bottom-30">
 													<h3 class="m-widget14__title">일별 수도 사용량</h3>
 												</div>
-												<canvas id="dailyChart"></canvas>
+												
+												<div class="canvasDiv">
+													<canvas id="dailyChart" class="chartjsChart"></canvas>
+												</div>
 
 											</div>
 										</div>
@@ -143,7 +149,9 @@
 											<div class="m-widget14__header m--margin-bottom-30">
 												<h3 class="m-widget14__title">선택 수도 사용량</h3>
 											</div>
-											<canvas id="selectChart"></canvas>
+											<div class="canvasDiv">
+												<canvas id="selectChart" class="chartjsChart"></canvas>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -156,7 +164,11 @@
 											<div class="m-widget14__header m--margin-bottom-50">
 												<h3 class="m-widget14__title">실시간 게이지</h3>
 											</div>
-											<div id="gaugeChart" class="m-widget14__chart"></div>
+											
+											
+											<div class="canvasDiv">
+												<div id="gaugeChart" class="m-widget14__chart"></div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -183,59 +195,75 @@
 		</footer>
 	</div>
 
-	<script charset='utf-8'>
-	var getStartDate = ${startDate}.split('/')[0] + '년';
-	var getEndDate = ${endDate}.split('/')[0] + '년';
-	
+	<script src="/resources/js/vendors.bundle.js" type="text/javascript"></script>
+	<script src="/resources/js/scripts.bundle.js" type="text/javascript"></script>
+	<script src="/resources/js/fullcalendar.bundle.js" type="text/javascript"></script>
+	<script src="/resources/js/dashboard.js" type="text/javascript"></script>
+	<!-- firebase SDK e§?i?￢ -->
+	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
+<script>
+ // Initialize Firebase
+ var config = {
+   apiKey: "AIzaSyAFW0hE15CrQtjBrW-c6jFR6f79OwYqL00",
+   authDomain: "flow-3191.firebaseapp.com",
+   databaseURL: "https://flow-3191.firebaseio.com",
+   projectId: "flow-3191",
+   storageBucket: "flow-3191.appspot.com",
+   messagingSenderId: "272459175294"
+ };
+ firebase.initializeApp(config);
+/* 로그아웃 버튼 클릭시 */
+$('#btnLogout').click(function(){
+	firebase.auth().signOut().then(function(){
+		location.href = "login";
+	},function(error){
+		alert("로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
+	})
+});
 
-	var ctx1 = $('#selectChart');
-	var selectChart = new Chart(ctx1, {
-		type: 'bar',
-		data: {
-			labels: [getStartDate],
-		    datasets: [
-		    	{
-		          label: "선택 사용량",
-		          backgroundColor: ['#3cba9f', '#3e95cd'],
-		          borderWidth: 1,
-		          data: ${thisYearMonthlyData}
-		        }
-		      ]
-		    },
-		options: {
-			cornerRadius: 20,
-			responsive: true,
-            legend: {
-               // onClick: (e) => e.stopPropagation()
-            	display: false
-            },
-            scales: {
-            	xAxes: [{
-            		barPercentage : 0.5,
-            		categoryPercentage: 0.5,
-            		gridLines: {
-           	        	display: false,
-           	        	color: 'black'
-           	        }
-            	}],
-                yAxes: [{
-                	gridLines: {
-                        display: false,
-                        color: 'black'
-                    }
-                }]
-            }
-		}
+/* 인증 상태 변화 감시하기 */
+var url = "/?port=";
+var today = new Date();
+var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
+var dayList = [];
+for(i = 1; i <= getDay; i++) { dayList.push(i+'일'); }
+date = today.getFullYear() + '/' + (today.getMonth() + 1 ) + '/';
+firebase.auth().onAuthStateChanged(function(user) {
+	if (user) { // 인증되었을 때
+		 url += user.displayName;
+	} else {
+		location.href = "login";
+	}
+});
+
+$(document).ready(function(){
+	$('.applyBtn').click(function() {
+		startDate = $('[name="daterangepicker_start"]').val();
+		endDate = $('[name="daterangepicker_end"]').val();
+		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
 	});
 	
-	var ctx2 = $('#dailyChart');
-	var dailyChart = new Chart(ctx2, {
+	$('[data-range-key="Last Month"], [data-range-key="Last Year"]').click(function() {
+		startDate = $('[name="daterangepicker_start"]').val();
+		endDate = $('[name="daterangepicker_end"]').val();
+		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
+	});
+			
+});
+</script>
+
+	<script charset='utf-8'>
+	var selectDateList = ${selectDateList};
+
+	var ctx1 = $('#dailyChart');
+	var dailyChart = new Chart(ctx1, {
 		type: 'line',
 		data: {
 			labels: dayList,
-			datasets: [
-			{
-				label: '올해 사용량',
+			datasets: [{
+				label: '사용량',
 				data: ${thisYearMonthlyData},
 				borderColor: "#3e95cd",
 				fill: false
@@ -256,6 +284,27 @@
 		}
 	});
 	
+	var ctx2 = $('#selectChart');
+	var selectChart = new Chart(ctx2, {
+		type: 'line',
+		data: {
+			labels: selectDateList,
+		    datasets: [{
+		          label: '사용량',
+		          data: ${selectDateData},
+		          borderColor: "#3e95cd",
+		          fill: false
+		        }]
+		    },
+		    options: {
+				responsive: true,
+				barRoundness: 0,
+	            legend: {
+	               // onClick: (e) => e.stopPropagation()
+	            	display: true
+	            }
+			}
+		});
 	
 	$('#gaugeChart').dxCircularGauge({
 		scale: {
@@ -280,66 +329,6 @@
 		},
 		value: 45,
 	});
-</script>
-
-	<script src="/resources/js/vendors.bundle.js" type="text/javascript"></script>
-	<script src="/resources/js/scripts.bundle.js" type="text/javascript"></script>
-	<script src="/resources/js/fullcalendar.bundle.js" type="text/javascript"></script>
-	<script src="/resources/js/dashboard.js" type="text/javascript"></script>
-	<!-- firebase SDK e§?i?￢ -->
-	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
-	<script>
-	// Initialize Firebase
-	/* 파이어 베이스 연결 정보 */
-	var url = "/?port=";
-	var config = {
-	  apiKey: "AIzaSyAUsfzFxB0EXOMvHPO9JWUeiWWsvlLme5c",
-	  authDomain: "liters-aaa.firebaseapp.com",
-	  databaseURL: "https://liters-aaa.firebaseio.com",
-	  projectId: "liters-aaa",
-	  storageBucket: "liters-aaa.appspot.com",
-	  messagingSenderId: "257203396435"
-	};
-	firebase.initializeApp(config);
-</script>
-
-	<script>
-/* 로그아웃 버튼 클릭시 */
-$('#btnLogout').click(function(){
-	firebase.auth().signOut().then(function(){
-		location.href = "login";
-	},function(error){
-		alert("로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
-	})
-});
-
-/* 인증 상태 변화 감시하기 */
-var url = "/?port=";
-firebase.auth().onAuthStateChanged(function(user) {
-	if (user) { // 인증되었을 때
-		 url += user.displayName;
-	} else {
-		location.href = "login";
-	}
-});
-
-$(document).ready(function(){
-	$('.applyBtn').click(function() {
-		startDate = $('[name="daterangepicker_start"]').val();
-		endDate = $('[name="daterangepicker_end"]').val();
-		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
-	});
-	
-	$('[data-range-key="Last Month"], [data-range-key="Last Year"]').click(function() {
-		startDate = $('[name="daterangepicker_start"]').val();
-		endDate = $('[name="daterangepicker_end"]').val();
-		alert(endDate + '\n' + startDate);
-		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
-	});
-			
-});
 </script>
 </body>
 </html>
