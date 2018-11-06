@@ -131,4 +131,37 @@
          	text-align: right;
          }
 
+         .m-stack {
+            width: 100% !important;
+         }
+
+
+         .m-grid__item .m-brand {
+            width: 100% !important;
+         }
+
+         .left {
+             width: 70% !important;
+             float: left;
+         }
+
+         .right {
+             display: table !important;
+             width: 30% !important;
+             text-align: right;
+         }
+
+         .table-cell {
+             display: table-cell !important;
+             vertical-align: middle;
+         }
+
+         .checkbox-inline {
+             margin-bottom: 0 !important;
+         }
+
+         .toggle{
+             margin-left: 15px !important;
+             margin-right: 20px !important;
+         }
   

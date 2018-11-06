@@ -2,9 +2,12 @@ package com.FlowProject.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
 @EnableAsync

@@ -40,13 +40,11 @@
 <!--end::Page Vendors Styles -->
 <link href="/resources/css/index.css" rel="stylesheet" type="text/css">
 <link rel="shortcut icon" href="/resources/img/favicon.png">
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
 
-<style>
-	#hiddenDiv {
-		display: none;
-	}
-</style>
+
 </head>
 <body class="m-page--boxed m-body--fixed m-header--static m-aside--offcanvas-default">
 	<div class="m-grid m-grid--hor m-grid--root m-page">
@@ -56,13 +54,20 @@
 				<div class="m-grid__item m-grid__item--fluid m-grid m-grid--desktop m-grid--ver-desktop m-header__wrapper">
 					<!-- begin::Brand -->
 					<div class="m-grid__item m-brand">
-						<div class="m-stack m-stack--ver m-stack--general m-stack--inline">
+						<div class="m-stack m-stack--ver m-stack--general m-stack--inline left">
 							<div class="m-stack__item m-stack__item--middle m-brand__logo">
 								<a class="m-brand__logo-wrapper"> <img alt="" src="/resources/img/logo.png"> <span id="logoText">&nbsp;Flow 온라인 수도 검침</span>
 								</a>
 							</div>
 						</div>
+
+						<div class="m-stack m-stack--ver m-stack--general m-stack--inline right">
+							<div class="table-cell">
+								<button id="btnLogout" class="btn btn-outline-metal m-btn  m-btn--icon m-btn--pill">Logout</button>
+							</div>
+						</div>
 					</div>
+
 				</div>
 			</div>
 		</header>
@@ -70,6 +75,8 @@
 		<div class="m-grid__item m-grid__item--fluid m-grid m-grid m-grid--hor m-container m-container--responsive m-container--xxl">
 			<div class="m-grid__item m-grid__item--fluid m-grid m-grid--hor-desktop m-grid--desktop m-body">
 				<div class="m-grid__item m-body__nav">
+
+
 					<div class="m-stack m-stack--ver m-stack--desktop">
 						<div class="m-stack__item m-stack__item--middle m-dropdown m-dropdown--arrow m-dropdown--large m-dropdown--mobile-full-width m-dropdown--align-right m-dropdown--skin-light m-header-search m-header-search--expandable m-header-search--skin-">
 
@@ -112,6 +119,15 @@
 								<div class="mr-auto">
 									<h3 class="m-subheader__title ">사용량 그래프</h3>
 								</div>
+								
+								<div>
+									<label class="checkbox-inline">
+										밸브 상태
+								    	<input type="checkbox" checked data-toggle="toggle" id="toggleBtn">
+									</label>
+								</div>
+								
+								
 								<div>
 									<span class="m-subheader__daterange" id="m_dashboard_daterangepicker"> <span class="m-subheader__daterange-label"> <span class="m-subheader__daterange-title">Today:</span> <span class="m-subheader__daterange-date m--font-brand" id="printDate"></span>
 									</span> <a href="#" class="btn btn-sm btn-brand m-btn m-btn--icon m-btn--icon-only m-btn--custom m-btn--pill"> <i class="la la-angle-down"></i>
@@ -131,7 +147,7 @@
 												<div class="m-widget14__header m--margin-bottom-30">
 													<h3 class="m-widget14__title">일별 수도 사용량</h3>
 												</div>
-												
+
 												<div class="canvasDiv">
 													<canvas id="dailyChart" class="chartjsChart"></canvas>
 												</div>
@@ -151,23 +167,6 @@
 											</div>
 											<div class="canvasDiv">
 												<canvas id="selectChart" class="chartjsChart"></canvas>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-xl-12">
-									<div class="m-portlet m-portlet--full-height m-portlet--skin-light m-portlet--fit  m-portlet--rounded">
-										<div class="m-widget14">
-											<div class="m-widget14__header m--margin-bottom-50">
-												<h3 class="m-widget14__title">실시간 게이지</h3>
-											</div>
-											
-											
-											<div class="canvasDiv">
-												<div id="gaugeChart" class="m-widget14__chart"></div>
 											</div>
 										</div>
 									</div>
@@ -203,7 +202,7 @@
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
-<script>
+	<script>
  // Initialize Firebase
  var config = {
    apiKey: "AIzaSyAFW0hE15CrQtjBrW-c6jFR6f79OwYqL00",
@@ -228,7 +227,10 @@ var url = "/?port=";
 var today = new Date();
 var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
 var dayList = [];
+var maxDayList = [];
 for(i = 1; i <= getDay; i++) { dayList.push(i+'일'); }
+for(i = 1; i <= 31; i++) { maxDayList.push(i+'일'); }
+
 date = today.getFullYear() + '/' + (today.getMonth() + 1 ) + '/';
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) { // 인증되었을 때
@@ -271,6 +273,7 @@ $(document).ready(function(){
 		},
 		options: {
 			responsive: true,
+			maintainAspectRatio: true,
 			barRoundness: 0,
             legend: {
                // onClick: (e) => e.stopPropagation()
@@ -298,6 +301,7 @@ $(document).ready(function(){
 		    },
 		    options: {
 				responsive: true,
+				maintainAspectRatio: true,
 				barRoundness: 0,
 	            legend: {
 	               // onClick: (e) => e.stopPropagation()
@@ -305,30 +309,7 @@ $(document).ready(function(){
 	            }
 			}
 		});
-	
-	$('#gaugeChart').dxCircularGauge({
-		scale: {
-			startValue: 0,
-			endValue: 100,
-			majorTick: {
-				tickInterval: 10
-			},
-			label: {
-				customizeText: function (arg) {
-					return arg.valueText + ' %';
-				}
-			}
-		},
-		rangeContainer: {
-			ranges: [
-				{ startValue: 0, endValue: 20, color: '#CE2029' },
-				{ startValue: 20, endValue: 50, color: '#FFD700' },
-				{ startValue: 50, endValue: 100, color: '#228B22' }
-			],
-			width: 10
-		},
-		value: 45,
-	});
+
 </script>
 </body>
 </html>
