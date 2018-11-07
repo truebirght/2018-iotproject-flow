@@ -278,7 +278,7 @@ var mySwitch = new Switch(el, {
 	offText : 'X',
 	onChange : function(){
 	$.ajax({
-	        url : '/Valve/' + userId + '/' + status,
+	        url : '/Valve/' + vPort + '/' + status,
 	        type : 'POST',
 	        data : checkList,
 	        dataType:"json",
