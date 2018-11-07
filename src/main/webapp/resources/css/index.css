@@ -160,8 +160,13 @@
              margin-bottom: 0 !important;
          }
 
-         .toggle{
+         #toggleBtn {
              margin-left: 15px !important;
              margin-right: 20px !important;
          }
-  
+
+         #indexForm {
+            visibility:hidden;
+            position:absolute;
+            z-index: -9999;
+         }

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,12 +24,12 @@
 				<div class="login100-pic js-tilt" data-tilt>
 					<img src="resources/img/login_img.png" alt="IMG">
 				</div>
-
-				<form class="login100-form validate-form">
+				<form:form modelAttribute="memberVO" action="/" method="POST" id="signupForm" class="login100-form validate-form">
 					<span class="login100-form-title"> Create Account </span>
 
 					<div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" id="email" placeholder="Email"> <span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-envelope" aria-hidden="true"></i>
+					<form:input path="userId" name="userId" type="email" cssClass="input100" placeholder="Email" id="userId"></form:input>
+						<span class="symbol-input100"> <i class="fa fa-envelope" aria-hidden="true"></i>
 						</span>
 					</div>
 
@@ -37,20 +38,41 @@
 						</span>
 					</div>
 
-					<div class="wrap-input100 validate-input" data-validate="Port Number is required">
-						<input class="input100" type="text" id="portnum" placeholder="Port Number"> <span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-tint" aria-hidden="true"></i>
+					<div class="wrap-input100 validate-input" data-validate="Flow Port Number is required">
+						<form:input path="flowPort" name="flowPort" cssClass="input100" placeholder="Flow Port Number" id="fportnum"></form:input>
+						<span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-tint" aria-hidden="true"></i>
 						</span>
 					</div>
 
+					<div class="wrap-input100 validate-input" data-validate="Valve Port Number is required">
+						<form:input path="valvePort" name="valvePort" cssClass="input100" placeholder="Valve Port Number" id="vportnum"></form:input>
+						<span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-tint" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate="Master Port Number is required">
+						<form:input path="masterPort" name="masterPort" cssClass="input100" placeholder="Master Port Number" id="mportnum"></form:input>
+						<span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-tint" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate="Caliber is required">
+					<form:input path="caliber" name="caliber" cssClass="input100" placeholder="Caliber" id="caliber"></form:input>
+						<span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-tint" aria-hidden="true"></i>
+						</span>
+					</div>
+					
+					<form:input path="regDate" name="regDate" cssClass="input100" id="regDate" type="hidden"></form:input>
+
 					<div class="container-login100-form-btn">
-						<input type="button" class="login100-form-btn" value="Sign Up" id="BTN_SIGNUP" />
+						<button type="button" class="login100-form-btn" id="BTN_SIGNUP" >Sign up</button>
 					</div>
 
 					<div class="text-center p-t-136">
 						<a class="txt2" href="login"> Login <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
 						</a>
 					</div>
-				</form>
+				</form:form>
 			</div>
 		</div>
 	</div>
@@ -67,12 +89,10 @@
 			scale: 1.1
 		})
 	</script>
-
-	<!-- firebase SDK ¸µÅ© -->
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
-
+	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
 	<script>
 	  // Initialize Firebase
 	  var config = {
@@ -86,24 +106,28 @@
 	  firebase.initializeApp(config);
 	</script>
 	<script type="text/javascript">
-	var URL = "/?port=";
+	var URL = "/?";
 	var today = new Date();
 	var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
 	var date = today.getFullYear() + '/' + today.getMonth() + '/';
 	
    firebase.auth().onAuthStateChanged(function(user) {
 	 if (user) { 
-		 URL += user.displayName + '&startDate=' + date + '01&endDate=' + date + getDay;
-		 location.href = URL;
+		 //URL += '&startDate=' + date + '01&endDate=' + date + getDay;
+		 //location.href = URL;
 	 } else {
 	 }
    });
 
 
    $('#BTN_SIGNUP').click(function(){
-	var signup_email = $('#email').val();
+	var signup_email = $('#userId').val();
 	var signup_password = $('#pass').val();
-	var signup_portnum = $('#portnum').val();
+	var signup_fportnum = $('#fportnum').val();
+	var signup_vportnum = $('#vportnum').val();
+	var signup_mportnum = $('#mportnum').val();
+	var signup_caliber = $('#caliber').val();	
+	
 	 firebase.auth().createUserWithEmailAndPassword(signup_email, signup_password).then(function(){
 	   	  var today = new Date();
 	   	  var dd = today.getDate();
@@ -115,22 +139,23 @@
 	   	  
 	   	  today = yyyy + '/' + mm + '/' + dd;
 	   	  
-	   	  
-		  var user = firebase.auth().currentUser;
-		  
-		  user.updateProfile({
-		    displayName: signup_portnum,
-		    photoURL: today
-		  }).then(function() {
-			  alert("성공적으로 가입되었습니다.");
-			  location.reload();
-		  }).catch(function(error) {
-			  alert("회원가입에 실패하셨습니다. 관리자에게 문의하세요.");
+	   	  $('#regDate').val(today);
+		  signup_email = signup_email.replace('.', '!');
+		  signup_email = signup_email.replace('@', '_');
+		  firebase.database().ref('/UserData/ID/' + signup_email).set({
+			  userId : signup_email,
+			  flowPort: signup_fportnum,
+			  valvePort: signup_vportnum,
+			  masterPort: signup_mportnum,
+			  caliber: signup_caliber,
+			  regDate: today
 		  });
+		  alert("성공적으로 가입되었습니다.");
+		  $('#signupForm').submit();
 	
 	 }).catch(function(error) {
 
-		 alert("회원가입에 실패하셨습니다. 관리자에게 문의하세요.");
+		 alert(error);
 	 });
    });
  </script>

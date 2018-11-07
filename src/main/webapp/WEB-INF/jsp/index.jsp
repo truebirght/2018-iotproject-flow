@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html class="wf-montserrat-n3-active wf-montserrat-n4-active wf-montserrat-n5-active wf-montserrat-n6-active wf-montserrat-n7-active wf-roboto-n3-active wf-roboto-n4-active wf-roboto-n5-active wf-roboto-n6-active wf-roboto-n7-active wf-active">
 <head>
@@ -9,11 +10,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toggle -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
 <!-- Chartjs -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 <script type="text/javascript" src="/resources/js/Chart.roundedBarCharts.min.js"></script>
-<script src="https://cdn3.devexpress.com/jslib/18.1.6/js/dx.all.js" integrity="sha384-f8Cq8uEDm21R8+MKf8MuiefjIrLboOVKaP7zxk96z5s6gXMHZ04U2RKdHrsu3WGg sha512-YEEIPZTk1Gkw4WCq1c25EqVxocCj4GFsOnzPnHAR3zm4jiAefQ8dBM48ypb+6BW/sb+9qFa5ljX+AYOnMrFbEA==" crossorigin="anonymous"></script>
 <script type="text/javascript" src="/resources/js/moment.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/resources/css/switch.css">
+<script type="text/javascript" src="/resources/js/switch.js"></script>
 
 <!--begin::Web font -->
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -40,8 +56,8 @@
 <!--end::Page Vendors Styles -->
 <link href="/resources/css/index.css" rel="stylesheet" type="text/css">
 <link rel="shortcut icon" href="/resources/img/favicon.png">
-<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+
 
 
 
@@ -119,15 +135,13 @@
 								<div class="mr-auto">
 									<h3 class="m-subheader__title ">사용량 그래프</h3>
 								</div>
-								
+
 								<div>
-									<label class="checkbox-inline">
-										밸브 상태
-								    	<input type="checkbox" checked data-toggle="toggle" id="toggleBtn">
+									<label class="checkbox-inline"> 밸브 상태 <input type="checkbox" id="toggleBtn">
 									</label>
 								</div>
-								
-								
+
+
 								<div>
 									<span class="m-subheader__daterange" id="m_dashboard_daterangepicker"> <span class="m-subheader__daterange-label"> <span class="m-subheader__daterange-title">Today:</span> <span class="m-subheader__daterange-date m--font-brand" id="printDate"></span>
 									</span> <a href="#" class="btn btn-sm btn-brand m-btn m-btn--icon m-btn--icon-only m-btn--custom m-btn--pill"> <i class="la la-angle-down"></i>
@@ -193,12 +207,29 @@
 			</div>
 		</footer>
 	</div>
+	
+	
+	<input type="hidden" value="${memberVO.userId}" id="userId">
+	<input type="hidden" value="${checkLock}" id="checkLock">
+	
+	<form:form modelAttribute="memberVO" action="/" method="POST" id="indexForm">
+		<form:input path="userId" name="userId" type="email" placeholder="Email" id="userId"></form:input>
+		<form:input path="flowPort" name="flowPort" placeholder="Flow Port Number" id="fportnum"></form:input>
+		<form:input path="valvePort" name="valvePort"  placeholder="Valve Port Number" id="vportnum"></form:input>
+		<form:input path="masterPort" name="masterPort" placeholder="Master Port Number" id="mportnum"></form:input>
+		<form:input path="caliber" name="caliber" placeholder="Caliber" id="caliber"></form:input>
+		<form:input path="regDate" name="regDate" id="regDate"></form:input>
+		<form:input path="startDate" name="startDate" id="startDate"></form:input>
+		<form:input path="endDate" name="endDate" id="endDate"></form:input>
+	</form:form>
+	
+	
+	
 
 	<script src="/resources/js/vendors.bundle.js" type="text/javascript"></script>
 	<script src="/resources/js/scripts.bundle.js" type="text/javascript"></script>
 	<script src="/resources/js/fullcalendar.bundle.js" type="text/javascript"></script>
-	<script src="/resources/js/dashboard.js" type="text/javascript"></script>
-	<!-- firebase SDK e§?i?￢ -->
+	<!-- <script src="/resources/js/dashboard.js" type="text/javascript"></script> -->
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
@@ -222,58 +253,81 @@ $('#btnLogout').click(function(){
 	})
 });
 
+
+
+	
 /* 인증 상태 변화 감시하기 */
-var url = "/?port=";
 var today = new Date();
 var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
-var dayList = [];
-var maxDayList = [];
-for(i = 1; i <= getDay; i++) { dayList.push(i+'일'); }
-for(i = 1; i <= 31; i++) { maxDayList.push(i+'일'); }
-
-date = today.getFullYear() + '/' + (today.getMonth() + 1 ) + '/';
+var regDate = $('#regDate').val();
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) { // 인증되었을 때
-		 url += user.displayName;
 	} else {
 		location.href = "login";
 	}
 });
 
+
+var t = moment();
+var a = moment();
+var e = $("#m_dashboard_daterangepicker");
+	e.daterangepicker({
+		startDate: t,
+		endDate: a,
+		opens: "left",
+		autoUpdateInput: true,
+		locale: {
+		    format: 'YYYY/M/DD'
+		},
+		dateLimit: {
+		        months: '2'
+		},
+		minDate: regDate,
+		ranges: {
+		    "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")],
+		    "Last Year": [moment().subtract(1, "year").startOf("month"), moment().subtract(1, "year").endOf("month")]
+		}
+	}, r), r(t, a, "");
+
+	function r(t, a, r) {
+		var o = "",
+		n = "";
+		a - t < 100 || "Today" == r ? (o = "Today:", n = t.format("MMM D")) : "Yesterday" == r ? (o = "Yesterday:", n = t.format("MMM D")) : n = t.format("MMM D") + " - " + a.format("MMM D"), e.find(".m-subheader__daterange-date").html(n), e.find(".m-subheader__daterange-title").html(o)
+	}
+	
 $(document).ready(function(){
 	$('.applyBtn').click(function() {
-		startDate = $('[name="daterangepicker_start"]').val();
-		endDate = $('[name="daterangepicker_end"]').val();
-		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
+		$('#startDate').val($('[name="daterangepicker_start"]').val());
+		$('#endDate').val($('[name="daterangepicker_end"]').val());
+		$('#indexForm').submit();
 	});
 	
 	$('[data-range-key="Last Month"], [data-range-key="Last Year"]').click(function() {
-		startDate = $('[name="daterangepicker_start"]').val();
-		endDate = $('[name="daterangepicker_end"]').val();
-		location.href = url + "&startDate=" + startDate + "&endDate=" + endDate;
+		$('#startDate').val($('[name="daterangepicker_start"]').val());
+		$('#endDate').val($('[name="daterangepicker_end"]').val());
+		$('#indexForm').submit();
 	});
 			
 });
+
 </script>
 
 	<script charset='utf-8'>
-	var selectDateList = ${selectDateList};
 
 	var ctx1 = $('#dailyChart');
 	var dailyChart = new Chart(ctx1, {
 		type: 'line',
 		data: {
-			labels: dayList,
+			labels: ${thisYearMonthlyDataKey},
 			datasets: [{
 				label: '사용량',
-				data: ${thisYearMonthlyData},
+				data: ${thisYearMonthlyDataValue},
 				borderColor: "#3e95cd",
 				fill: false
 			}]
 		},
 		options: {
 			responsive: true,
-			maintainAspectRatio: true,
 			barRoundness: 0,
             legend: {
                // onClick: (e) => e.stopPropagation()
@@ -291,24 +345,60 @@ $(document).ready(function(){
 	var selectChart = new Chart(ctx2, {
 		type: 'line',
 		data: {
-			labels: selectDateList,
+			labels: ${selectDateDataKey},
 		    datasets: [{
 		          label: '사용량',
-		          data: ${selectDateData},
+		          data: ${selectDateDataValue},
 		          borderColor: "#3e95cd",
 		          fill: false
 		        }]
 		    },
 		    options: {
 				responsive: true,
-				maintainAspectRatio: true,
 				barRoundness: 0,
 	            legend: {
 	               // onClick: (e) => e.stopPropagation()
 	            	display: true
+	            },
+	            title: {
+	                display: true,
+	                fontSize: 22,
+	                text: '사용 요금 : ' + (today.getMonth() + 1) + '원'
 	            }
 			}
 		});
+	
+	var userId = $('#userId').val();
+	var checkLock = $('#checkLock').val();
+	
+	
+	var bool;
+	var status;
+	if(checkLock == "on") {
+		bool = true;
+		status = "off";
+	}  else {
+		bool = false;
+		status = "on";
+	}
+	var el = $('#toggleBtn');
+	var mySwitch = new Switch(el, {
+		checked : true,
+		onText : '밸브 열림',
+		offText : '밸브 잠김',
+		onChange : function(){
+			$.ajax({
+	 	        url : 'Valve/' + userId + '/' +  status,
+	 	        type : 'POST',
+	 	        success: function(data) {
+	 	        	mySwitch.toggle();
+	 	        },
+	 	        error:function(request,status,error){
+	 	    	  console.log(error)
+	 	        }
+	 	    });
+		}
+	});
 
 </script>
 </body>
