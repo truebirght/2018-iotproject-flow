@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import com.FlowProject.VO.MemberVO;
@@ -38,7 +37,7 @@ public class WebController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/")
+	@RequestMapping("/")
 	public String index(Model model, 
 			@ModelAttribute MemberVO memberVO)
 					throws Exception {
@@ -81,7 +80,6 @@ public class WebController {
 		List<Integer> selectDateDataValue = selectDateData.values().stream().collect(Collectors.toList());
 		
 		String checkLock = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/checkLock?valvePort=" + vPort, String.class);
-		
 		/*
 		
 		//RequestParam을 통해 들어온 변수들을 LocalDate로 변환

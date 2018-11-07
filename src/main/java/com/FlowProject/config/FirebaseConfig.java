@@ -26,9 +26,9 @@ public class FirebaseConfig {
 		if (FirebaseApp.getApps().isEmpty()) {
 			FirebaseOptions options = new FirebaseOptions.Builder()
 										.setCredentials(GoogleCredentials.fromStream(
-												new ClassPathResource("json/caramel-hallway-150401-firebase-adminsdk-qk14x-0aef4ea305.json")
+												new ClassPathResource("json/flow-3191-firebase-adminsdk-omw4y-92b1ff1b7f.json")
 												.getInputStream()))
-										.setDatabaseUrl("https://caramel-hallway-150401.firebaseio.com/").build();
+										.setDatabaseUrl("https://us-central1-flow-3191.firebaseio.com/").build();
 			FirebaseApp.initializeApp(options);
 		}
 	}

@@ -137,8 +137,9 @@
 								</div>
 
 								<div>
-									<label class="checkbox-inline"> 밸브 상태 <input type="checkbox" id="toggleBtn">
-									</label>
+									<label class="checkbox-inline" for="toggleBtn">밸브 상태</label>
+									<input type="checkbox" id="toggleBtn" class="checkbox-switch">
+									
 								</div>
 
 
@@ -209,9 +210,6 @@
 	</div>
 	
 	
-	<input type="hidden" value="${memberVO.userId}" id="userId">
-	<input type="hidden" value="${checkLock}" id="checkLock">
-	
 	<form:form modelAttribute="memberVO" action="/" method="POST" id="indexForm">
 		<form:input path="userId" name="userId" type="email" placeholder="Email" id="userId"></form:input>
 		<form:input path="flowPort" name="flowPort" placeholder="Flow Port Number" id="fportnum"></form:input>
@@ -253,9 +251,6 @@ $('#btnLogout').click(function(){
 	})
 });
 
-
-
-	
 /* 인증 상태 변화 감시하기 */
 var today = new Date();
 var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
@@ -267,6 +262,41 @@ firebase.auth().onAuthStateChanged(function(user) {
 	}
 });
 
+var userId = $('#userId').val();
+var checkLock = ${checkLock};
+var vPort = $('#vportnum').val();
+
+var status = (checkLock === "on") ? "off" : "on";
+var bool = (checkLock === "on") ? true : false;
+var keys;
+var checkList = [];
+var el = document.querySelector('.checkbox-switch');
+var mySwitch = new Switch(el, {
+	checked: bool,
+	showText: true,
+	onText : 'O',
+	offText : 'X',
+	onChange : function(){
+	$.ajax({
+	        url : '/Valve/' + userId + '/' + status,
+	        type : 'POST',
+	        data : checkList,
+	        dataType:"json",
+	        success: function(data) {
+	        	if(data.length==0)
+	        		alert("결과가 없습니다");
+	        	else {
+	        		checkList = data;
+	        		status = (checkList.status === "on") ? "off" : status = "on";
+	        		
+	        	}
+	        },
+	        error:function(request,status,error){
+	    	  console.log(error)
+	        }
+	    });
+	}
+});
 
 var t = moment();
 var a = moment();
@@ -368,38 +398,6 @@ $(document).ready(function(){
 			}
 		});
 	
-	var userId = $('#userId').val();
-	var checkLock = $('#checkLock').val();
-	
-	
-	var bool;
-	var status;
-	if(checkLock == "on") {
-		bool = true;
-		status = "off";
-	}  else {
-		bool = false;
-		status = "on";
-	}
-	var el = $('#toggleBtn');
-	var mySwitch = new Switch(el, {
-		checked : true,
-		onText : '밸브 열림',
-		offText : '밸브 잠김',
-		onChange : function(){
-			$.ajax({
-	 	        url : 'Valve/' + userId + '/' +  status,
-	 	        type : 'POST',
-	 	        success: function(data) {
-	 	        	mySwitch.toggle();
-	 	        },
-	 	        error:function(request,status,error){
-	 	    	  console.log(error)
-	 	        }
-	 	    });
-		}
-	});
-
 </script>
 </body>
 </html>

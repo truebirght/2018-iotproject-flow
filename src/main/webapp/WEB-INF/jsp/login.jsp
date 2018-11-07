@@ -96,7 +96,6 @@
    $('#BTN_SIGNIN').click(function(){
 	 var signin_mail = $('#email').val();
 	 var signin_password = $('#pass').val();
-
 	 firebase.auth().signInWithEmailAndPassword(signin_mail, signin_password).then(function(){
 	 // 메일 회원  로그인 성공으로 간주 = onAuthStateChanged()가 동작함
 		 $('#loginForm').submit();
