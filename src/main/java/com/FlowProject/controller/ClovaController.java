@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,16 +54,20 @@ public class ClovaController {
 			case "ValveControIntent":
 				String stat = intent.path("slots").path("valveStatus").path("value").textValue();
 				ObjectNode value = (ObjectNode)rep.path("response").path("outputSpeech").path("values");
+				
+				boolean isOpen = stat.equals("open");
+				if(isOpen) {
+					RestTemplate template = new RestTemplate();
+					template.getForObject(
+							"https://us-central1-flow-3191.cloudfunctions.net/valveOnOff?port=23&status=" + (isOpen ? "on" : "off"), String.class);
+				}
+				
+				
 				value.put("value", "벨브를" + ( stat.equals("open") ? "열었습니다": "잠궜습니다"));
 				break;
 			}
 		}
 		
-			log.info("type : {}",type);
-		//Jmapper.readTree(file)
-		return rep.toString();
-		//Gson gson = new GsonBuilder().create();
-		//gson.
-		
+		return rep.toString();		
 	}
 }
