@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -89,13 +90,8 @@ public class WebController {
 					"&startDate=" + startDate + "&endDate=" + endDate, Map.class);
 		} else { masterLitter = myLitter; }
 		
-		logger.info(masterLitter.toString());
-		
-		
-		
 		List<String> selectDateDataKey = myLitter.keySet().stream().map(k-> "'" + k + "'").collect(Collectors.toList());
 		List<Integer> selectDateDataValue = myLitter.values().stream().collect(Collectors.toList());
-		Integer masterTotalLitter = masterLitter.values().stream().reduce(0,  (a, b) -> (a + b));
 		
 		String checkLock = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/checkLock?valvePort=" + vPort, String.class);
 		
@@ -108,11 +104,14 @@ public class WebController {
 		
 		int betweenDays = (int) ((period.getDays() + 1) / (60 * 60 * 24)) / 31;
 		int month = ((betweenDays) == 0) ? 1 : betweenDays;
-		int selectDateTotalLitter = selectDateDataValue.stream().reduce(0,  (a, b) -> (a + b));
-		int masterTax = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeTax?caliber=" + memberVO.getCaliber() +
+		Integer selectDateTotalLitter = selectDateDataValue.stream().reduce(0,  (a, b) -> (a + b));
+		Integer masterTotalLitter = masterLitter.values().stream().reduce(0,  (a, b) -> (a + b));
+		Integer masterTax = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeTax?caliber=" + memberVO.getCaliber() +
 				"&litter=" + masterTotalLitter + "&houseNumber=" + memberVO.getHouseNumber() + "&month=" + month, Integer.class);
 		
-		int myTax = (selectDateTotalLitter / masterTotalLitter) * masterTax;
+		Integer myTax = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/calc?masterTax=" + masterTax +
+				"&myLitter=" + selectDateTotalLitter + "&masterLitter=" + masterTotalLitter, Integer.class);
+		
 		/*
 		List<String> selectDateList = Stream.iterate(startDateLD, date -> date.plusDays(1))
 				.map(date -> "'" + date.format(formatter2) + "'")
@@ -126,7 +125,7 @@ public class WebController {
 	    model.addAttribute("selectDateDataKey", selectDateDataKey);
 	    model.addAttribute("selectDateDataValue", selectDateDataValue);
 	    model.addAttribute("checkLock", checkLock);
-	    model.addAttribute("selectDateTotalTax", myTax);
+	    model.addAttribute("myTax", myTax);
 	    return "index";
 	}
 }

@@ -256,10 +256,9 @@ function addComma(num) {
   var regexp = /\B(?=(\d{3})+(?!\d))/g;
   return num.toString().replace(regexp, ',');
 }
-
-var selectDateTotalTax = ${selectDateTotalTax};
-
 var selectDateDataKey = ${selectDateDataKey};
+
+var selectDateTotalTax = ${myTax}
 selectDateTotalTax = selectDateDataKey[0] + ' ~ ' + selectDateDataKey[selectDateDataKey.length - 1]
 	+ ' 사용 요금 : ' + addComma(selectDateTotalTax) + '원';
 

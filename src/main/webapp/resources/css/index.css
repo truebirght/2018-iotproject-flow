@@ -166,7 +166,7 @@
          }
 
          #indexForm {
-            visibility:hidden;
+            visibility:hidden !important;
             position:absolute;
             z-index: -9999;
          }
