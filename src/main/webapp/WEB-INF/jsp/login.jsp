@@ -28,13 +28,13 @@
 					<span class="login100-form-title"> Member Login </span>
 
 					<div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-						<form:input path="userId" name="userId" type="email" cssClass="input100" placeholder="Email" id="email"></form:input>
+						<form:input path="userId" name="userId" type="email" cssClass="input100" placeholder="Email" id="email" value="Guest@google.com"></form:input>
 						<span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-envelope" aria-hidden="true"></i>
 						</span>
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate="Password is required">
-						<input class="input100" type="password" id="pass" placeholder="Password"> <span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-lock" aria-hidden="true"></i>
+						<input class="input100" type="password" id="pass" placeholder="Password" value="1234qwer"> <span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-lock" aria-hidden="true"></i>
 						</span>
 					</div>
 

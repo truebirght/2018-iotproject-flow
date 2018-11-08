@@ -38,22 +38,20 @@ public class RestFlowController {
 		}
 		
 		date = String.valueOf(year) + "/" + String.valueOf(month);
-		
 		RestTemplate template = new RestTemplate();
 		
-		String port = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/findFlow?userId=" 
-	    		+ userId, String.class);
-		
+		Integer port = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/findFlow?userId=" 
+	    		+ userId, Integer.class);
 		@SuppressWarnings("unchecked")
 		List<Integer> monthLitter = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/monthLitter?port=" + port + 	
 				"&date=" + date, List.class);
-		
 		int totalLitter = monthLitter.stream().reduce(0, (a,b) -> a+b);
 		
 		Integer totalTax = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/testTax?caliber=" + caliber + 
 				"&litter=" + String.valueOf(totalLitter), Integer.class);
 		
 		Map<String, Object> totalMap = new HashMap<String, Object>();
+		
 		totalMap.put("totalLitter", totalLitter);
 		totalMap.put("totalTax", totalTax);
 		

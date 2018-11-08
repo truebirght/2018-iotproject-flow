@@ -95,7 +95,7 @@ public class WebController {
 		
 		List<String> selectDateDataKey = myLitter.keySet().stream().map(k-> "'" + k + "'").collect(Collectors.toList());
 		List<Integer> selectDateDataValue = myLitter.values().stream().collect(Collectors.toList());
-		int masterTotalLitter = masterLitter.values().stream().mapToInt(v -> v).sum();
+		Integer masterTotalLitter = masterLitter.values().stream().reduce(0,  (a, b) -> (a + b));
 		
 		String checkLock = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/checkLock?valvePort=" + vPort, String.class);
 		
@@ -109,18 +109,10 @@ public class WebController {
 		int betweenDays = (int) ((period.getDays() + 1) / (60 * 60 * 24)) / 31;
 		int month = ((betweenDays) == 0) ? 1 : betweenDays;
 		int selectDateTotalLitter = selectDateDataValue.stream().reduce(0,  (a, b) -> (a + b));
-		
-		
-		logger.info(memberVO.getCaliber());
-		logger.info(String.valueOf(masterTotalLitter));
-		logger.info(memberVO.getHouseNumber());
-		logger.info(String.valueOf(month));
-		
 		int masterTax = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeTax?caliber=" + memberVO.getCaliber() +
 				"&litter=" + masterTotalLitter + "&houseNumber=" + memberVO.getHouseNumber() + "&month=" + month, Integer.class);
 		
 		int myTax = (selectDateTotalLitter / masterTotalLitter) * masterTax;
-		logger.info(String.valueOf(month));
 		/*
 		List<String> selectDateList = Stream.iterate(startDateLD, date -> date.plusDays(1))
 				.map(date -> "'" + date.format(formatter2) + "'")
