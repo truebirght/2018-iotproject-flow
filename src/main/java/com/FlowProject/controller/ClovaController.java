@@ -55,6 +55,7 @@ public class ClovaController {
 		JsonNode intent = req.get("request").get("intent");
 		if(type.equals("IntentRequest")) {
 			switch(intent.path("name").textValue()) {
+			//밸브 제어 인텐트
 			case "ValveControIntent":
 				String stat = intent.path("slots").path("valveStatus").path("value").textValue();
 				ObjectNode value = (ObjectNode)rep.path("response").path("outputSpeech").path("values");
