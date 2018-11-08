@@ -14,10 +14,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
+@Slf4j
 public class ClovaController {
 
-	String defaultRep;
+	private String defaultRep;
+	private ObjectMapper mapper = new ObjectMapper();
 	
 	@PostConstruct
 	public void init() throws IOException{
@@ -30,8 +38,29 @@ public class ClovaController {
 	
 	@RequestMapping("clova")
 	@ResponseBody
-	public String dispatch(@RequestBody(required = false) Map<String, Object> validationData) {
-		return defaultRep;
+	public String dispatch(@RequestBody(required = false) Map<String, Object> validationData) throws IOException {
+		JsonNode req = mapper.valueToTree(validationData);
+		ObjectNode rep = (ObjectNode)mapper.readTree(defaultRep);
+		String type = req.get("request").get("type").asText();
+		
+		if(type.equals("LaunchRequest")){
+			return defaultRep;
+		}
+		
+		JsonNode intent = req.get("request").get("intent");
+		if(type.equals("IntentRequest")) {
+			switch(intent.path("name").textValue()) {
+			case "ValveControIntent":
+				String stat = intent.path("slots").path("valveStatus").path("value").textValue();
+				ObjectNode value = (ObjectNode)rep.path("response").path("outputSpeech").path("values");
+				value.put("value", "벨브를" + ( stat.equals("open") ? "열었습니다": "잠궜습니다"));
+				break;
+			}
+		}
+		
+			log.info("type : {}",type);
+		//Jmapper.readTree(file)
+		return rep.toString();
 		//Gson gson = new GsonBuilder().create();
 		//gson.
 		
