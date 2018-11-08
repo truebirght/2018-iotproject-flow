@@ -8,12 +8,13 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @Slf4j
 public class ClovaController {
-
+	Logger jsonLogger = LoggerFactory.getLogger("jsonLogger");
+	
 	private String defaultRep;
 	private ObjectMapper mapper = new ObjectMapper();
 	
@@ -52,7 +54,8 @@ public class ClovaController {
 		
 		JsonNode intent = req.get("request").get("intent");
 		ObjectNode spechText = (ObjectNode)rep.path("response").path("outputSpeech").path("values");
-		 
+		
+		spechText.put("value", "그건 제가 할수 없는일이네요.. 다른 일을 시켜보시겠어요?");
 		switch(type) {
 		case "SessionEndedRequest":
 			((ObjectNode)rep.path("response")).put("shouldEndSession",true);
@@ -63,26 +66,28 @@ public class ClovaController {
 			//밸브 제어 인텐트
 			case "ValveControIntent":
 				String stat = intent.path("slots").path("valveStatus").path("value").textValue();
-				
-				
-				FirebaseDatabase db = FirebaseDatabase.getInstance();
-				DatabaseReference ref = db.getReference("/ControlData/23/lock");
-				ref.setValue(stat.equals("open") ? "on" : "off", new CompletionListener() {
+				if(stat.equals("open") || stat.equals("lock")) {
+					FirebaseDatabase db = FirebaseDatabase.getInstance();
+					DatabaseReference ref = db.getReference("/ControlData/23/lock");
+					ref.setValue(stat.equals("open") ? "on" : "off", new CompletionListener() {
 
-					@Override
-					public void onComplete(DatabaseError error, DatabaseReference ref) {
-						log.info("{}/{}",error,ref);
-					}
+						@Override
+						public void onComplete(DatabaseError error, DatabaseReference ref) {
+							log.info("{}/{}",error,ref);
+						}
+						
+					});
 					
-				});
-				
-				spechText.put("value", "벨브를" + ( stat.equals("open") ? "열었습니다": "잠궜습니다"));
+					spechText.put("value", "벨브를" + ( stat.equals("open") ? "열었습니다": "잠궜습니다"));
+				}
 				break;
 			default:
 				spechText.put("value", "그건 제가 할수 없는일이네요.. 다른 일을 시켜보시겠어요?");
 			}
 			break;
 		}		
+		jsonLogger.info(req.toString());
+		jsonLogger.info(rep.toString());
 		return rep.toString();		
 	}
 }
