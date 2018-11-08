@@ -1,11 +1,11 @@
 package com.FlowProject.controller;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -45,6 +45,7 @@ public class WebController {
 		RestTemplate template = new RestTemplate();
 
 		if (memberVO.getUserId() == null || memberVO.getUserId().equals("")) { return "login"; }
+		
 		// 로그인 후 첫 메인화면
 		YearMonth day = YearMonth.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -58,12 +59,16 @@ public class WebController {
 		
 		String memberId = memberVO.getUserId().replace('@', '_');
 		memberId = memberId.replace('.', '!');
-		memberVO = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/findUser?userId=" + memberId, MemberVO.class);
+		
+		if (memberVO.getRegDate() == null || memberVO.getRegDate().equals("")) { 
+			memberVO = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/findUser?userId=" + memberId, MemberVO.class);
+		}
 		memberVO.setUserId(memberId);
 		memberVO.setStartDate(startDate);
 		memberVO.setEndDate(endDate);
 		
-		
+
+		String mPort = memberVO.getMasterPort();
 		String fPort = memberVO.getFlowPort();
 		String vPort = memberVO.getValvePort();
 		// RestTemplate으로 url에서 get
@@ -73,14 +78,26 @@ public class WebController {
 		List<String> thisYearMonthlyDataKey = thisYearMonthlyData.keySet().stream().map(s-> "'" + s + "'").collect(Collectors.toList());
 		List<Integer> thisYearMonthlyDataValue = thisYearMonthlyData.values().stream().collect(Collectors.toList());
 		
-		Map<String, Integer> selectDateData = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeLitter?port=" + fPort + 	
+		
+		Map<String, Integer> myLitter = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeLitter?port=" + fPort + 	
 				"&startDate=" + startDate + "&endDate=" + endDate, Map.class);
 		
-		List<String> selectDateDataKey = selectDateData.keySet().stream().map(s-> "'" + s + "'").collect(Collectors.toList());
-		List<Integer> selectDateDataValue = selectDateData.values().stream().collect(Collectors.toList());
+		Map<String, Integer> masterLitter;
+		
+		if(fPort != mPort || !fPort.equals(mPort)) {
+			masterLitter = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeLitter?port=" + mPort + 	
+					"&startDate=" + startDate + "&endDate=" + endDate, Map.class);
+		} else { masterLitter = myLitter; }
+		
+		logger.info(masterLitter.toString());
+		
+		
+		
+		List<String> selectDateDataKey = myLitter.keySet().stream().map(k-> "'" + k + "'").collect(Collectors.toList());
+		List<Integer> selectDateDataValue = myLitter.values().stream().collect(Collectors.toList());
+		int masterTotalLitter = masterLitter.values().stream().mapToInt(v -> v).sum();
 		
 		String checkLock = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/checkLock?valvePort=" + vPort, String.class);
-		/*
 		
 		//RequestParam을 통해 들어온 변수들을 LocalDate로 변환
 		LocalDate startDateLD = LocalDate.parse(startDate, formatter);
@@ -89,6 +106,22 @@ public class WebController {
 		//startDate - endDate 차이
 		Period period = Period.between(startDateLD, endDateLD);
 		
+		int betweenDays = (int) ((period.getDays() + 1) / (60 * 60 * 24)) / 31;
+		int month = ((betweenDays) == 0) ? 1 : betweenDays;
+		int selectDateTotalLitter = selectDateDataValue.stream().reduce(0,  (a, b) -> (a + b));
+		
+		
+		logger.info(memberVO.getCaliber());
+		logger.info(String.valueOf(masterTotalLitter));
+		logger.info(memberVO.getHouseNumber());
+		logger.info(String.valueOf(month));
+		
+		int masterTax = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/rangeTax?caliber=" + memberVO.getCaliber() +
+				"&litter=" + masterTotalLitter + "&houseNumber=" + memberVO.getHouseNumber() + "&month=" + month, Integer.class);
+		
+		int myTax = (selectDateTotalLitter / masterTotalLitter) * masterTax;
+		logger.info(String.valueOf(month));
+		/*
 		List<String> selectDateList = Stream.iterate(startDateLD, date -> date.plusDays(1))
 				.map(date -> "'" + date.format(formatter2) + "'")
 				.limit(period.getDays() + 1)
@@ -101,6 +134,7 @@ public class WebController {
 	    model.addAttribute("selectDateDataKey", selectDateDataKey);
 	    model.addAttribute("selectDateDataValue", selectDateDataValue);
 	    model.addAttribute("checkLock", checkLock);
+	    model.addAttribute("selectDateTotalTax", myTax);
 	    return "index";
 	}
 }

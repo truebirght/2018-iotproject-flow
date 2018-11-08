@@ -62,6 +62,12 @@
 						</span>
 					</div>
 					
+					<div class="wrap-input100 validate-input" data-validate="HouseNumber is required">
+					<form:input path="houseNumber" name="houseNumber" cssClass="input100" placeholder="houseNumber" id="houseNumber"></form:input>
+						<span class="focus-input100"></span> <span class="symbol-input100"> <i class="fa fa-tint" aria-hidden="true"></i>
+						</span>
+					</div>
+					
 					<form:input path="regDate" name="regDate" cssClass="input100" id="regDate" type="hidden"></form:input>
 
 					<div class="container-login100-form-btn">
@@ -127,7 +133,7 @@
 	var signup_vportnum = $('#vportnum').val();
 	var signup_mportnum = $('#mportnum').val();
 	var signup_caliber = $('#caliber').val();	
-	
+	var signup_houseNumber = $('#houseNumber').val();
 	 firebase.auth().createUserWithEmailAndPassword(signup_email, signup_password).then(function(){
 	   	  var today = new Date();
 	   	  var dd = today.getDate();
@@ -148,7 +154,11 @@
 			  valvePort: signup_vportnum,
 			  masterPort: signup_mportnum,
 			  caliber: signup_caliber,
-			  regDate: today
+			  regDate: today,
+			  houseNumber: signup_houseNumber
+		  });
+		  firebase.database().ref('/ControlData/' + signup_vportnum).set({
+			  lock : 'off'
 		  });
 		  alert("성공적으로 가입되었습니다.");
 		  $('#signupForm').submit();

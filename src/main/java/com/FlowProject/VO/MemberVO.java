@@ -18,4 +18,5 @@ public class MemberVO {
 	String caliber;
 	String startDate;
 	String endDate;
+	String houseNumber;
 }

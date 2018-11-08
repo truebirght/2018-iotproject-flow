@@ -21,8 +21,8 @@ public class RestValveController {
 			
 			RestTemplate template = new RestTemplate();
 			
-			String port = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/findValve?userId=" 
-		    		+ userId, String.class);
+			int port = template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/findValve?userId=" 
+		    		+ userId, Integer.class);
 		
 			return template.getForObject("https://us-central1-flow-3191.cloudfunctions.net/valveOnOff?port=" 
 		    		+ port + "&status=" + status, String.class);

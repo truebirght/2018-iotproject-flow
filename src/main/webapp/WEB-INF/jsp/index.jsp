@@ -219,6 +219,7 @@
 		<form:input path="regDate" name="regDate" id="regDate"></form:input>
 		<form:input path="startDate" name="startDate" id="startDate"></form:input>
 		<form:input path="endDate" name="endDate" id="endDate"></form:input>
+		<form:input path="houseNumber" name="houseNumber" id="houseNumber"></form:input>
 	</form:form>
 	
 	
@@ -251,10 +252,22 @@ $('#btnLogout').click(function(){
 	})
 });
 
+function addComma(num) {
+  var regexp = /\B(?=(\d{3})+(?!\d))/g;
+  return num.toString().replace(regexp, ',');
+}
+
+var selectDateTotalTax = ${selectDateTotalTax};
+
+var selectDateDataKey = ${selectDateDataKey};
+selectDateTotalTax = selectDateDataKey[0] + ' ~ ' + selectDateDataKey[selectDateDataKey.length - 1]
+	+ ' 사용 요금 : ' + addComma(selectDateTotalTax) + '원';
+
 /* 인증 상태 변화 감시하기 */
 var today = new Date();
 var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
 var regDate = $('#regDate').val();
+var todayFMT = moment().format('YYYY/MM/DD');;
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) { // 인증되었을 때
 	} else {
@@ -313,6 +326,7 @@ var e = $("#m_dashboard_daterangepicker");
 		        months: '2'
 		},
 		minDate: regDate,
+		maxDate: todayFMT,
 		ranges: {
 		    "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")],
 		    "Last Year": [moment().subtract(1, "year").startOf("month"), moment().subtract(1, "year").endOf("month")]
@@ -343,7 +357,6 @@ $(document).ready(function(){
 </script>
 
 	<script charset='utf-8'>
-
 	var ctx1 = $('#dailyChart');
 	var dailyChart = new Chart(ctx1, {
 		type: 'line',
@@ -375,7 +388,7 @@ $(document).ready(function(){
 	var selectChart = new Chart(ctx2, {
 		type: 'line',
 		data: {
-			labels: ${selectDateDataKey},
+			labels: selectDateDataKey,
 		    datasets: [{
 		          label: '사용량',
 		          data: ${selectDateDataValue},
@@ -393,10 +406,15 @@ $(document).ready(function(){
 	            title: {
 	                display: true,
 	                fontSize: 22,
-	                text: '사용 요금 : ' + (today.getMonth() + 1) + '원'
+	                text: selectDateTotalTax
 	            }
 			}
 		});
+	
+	
+	
+	
+	
 	
 </script>
 </body>
