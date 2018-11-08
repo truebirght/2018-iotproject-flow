@@ -35,10 +35,8 @@ public class ClovaController {
 	@PostConstruct
 	public void init() throws IOException{
 		defaultRep = new BufferedReader(new InputStreamReader(new ClassPathResource("json/defaultResponse.json").getInputStream()))
-				  .lines().collect(Collectors.joining("\n"));
-		
-		//Gson gson = new GsonBuilder().create();
-		//gson.fro
+				  .lines()
+				  .collect(Collectors.joining("\n"));
 	}
 	
 	@RequestMapping("clova")
@@ -48,17 +46,24 @@ public class ClovaController {
 		ObjectNode rep = (ObjectNode)mapper.readTree(defaultRep);
 		String type = req.get("request").get("type").asText();
 		
-		if(type.equals("LaunchRequest")){
+		if(type.equals("LaunchRequest") || req.path("session").path("new").asBoolean() == true){
 			return defaultRep;
 		}
 		
 		JsonNode intent = req.get("request").get("intent");
-		if(type.equals("IntentRequest")) {
+		ObjectNode spechText = (ObjectNode)rep.path("response").path("outputSpeech").path("values");
+		 
+		switch(type) {
+		case "SessionEndedRequest":
+			((ObjectNode)rep.path("response")).put("shouldEndSession",true);
+			spechText.put("value", "만나서 반가웠어요. 우리집 수도에 관하여 궁금한점이 있으면 언제든지 다시 불러주세요!");
+			break;
+		case "IntentRequest":
 			switch(intent.path("name").textValue()) {
 			//밸브 제어 인텐트
 			case "ValveControIntent":
 				String stat = intent.path("slots").path("valveStatus").path("value").textValue();
-				ObjectNode value = (ObjectNode)rep.path("response").path("outputSpeech").path("values");
+				
 				
 				FirebaseDatabase db = FirebaseDatabase.getInstance();
 				DatabaseReference ref = db.getReference("/ControlData/23/lock");
@@ -71,11 +76,13 @@ public class ClovaController {
 					
 				});
 				
-				value.put("value", "벨브를" + ( stat.equals("open") ? "열었습니다": "잠궜습니다"));
+				spechText.put("value", "벨브를" + ( stat.equals("open") ? "열었습니다": "잠궜습니다"));
 				break;
+			default:
+				spechText.put("value", "그건 제가 할수 없는일이네요.. 다른 일을 시켜보시겠어요?");
 			}
-		}
-		
+			break;
+		}		
 		return rep.toString();		
 	}
 }
