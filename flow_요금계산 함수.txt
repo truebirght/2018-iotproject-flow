@@ -1,0 +1,95 @@
+// 요금 계산 함수 ( 클로버에서 호출하는 계산 함수 )
+// caliber = 파이프 구경( ex 15 ) , litter = 월 사용 리터 ( ex : 10000 )
+exports.testTax = functions.https.onRequest((request, response) => {
+    
+    var l = request.query.litter;	// 사용량
+    var r = parseInt(request.query.caliber); // 파이프 구경
+    var h = 1;	// 세대수
+    var x = l*0.001;  //주택 전체 물 사용량 (단위 변환)
+    var m =(x/1/h);  //월평균 사용량 ( 세대별 물 사용량 )
+    var lw = 0;     // 하수도 요금
+    var cost;
+    var rpay;
+    // 소수점 첫째자리까지
+    // m = (m * 10**1) / 10**1; 
+    
+
+    // 구경당 기본금
+    if (r == 15)
+        rpay = 1080;
+    else if (r == 20)
+        rpay = 3000;
+    else if (r == 25)
+        rpay = 5200;
+    else if (r == 32)
+        rpay = 9400;
+    else if (r == 40)
+        rpay = 16000;
+    else if (r == 50)
+        rpay = 25000;
+    else if (r == 65)
+        rpay = 38900;
+    else if (r == 75)
+        rpay = 52300;
+    else if (r == 100)
+        rpay = 89000;
+    else if (r == 125)
+        rpay = 143000;
+    else if (r == 150)
+        rpay = 195000;
+    else if (r == 200)
+        rpay = 277000;
+    else if (r == 250)
+        rpay = 375000;
+    else if (r == 300)
+        rpay = 465000;
+    else if (r == 350)
+        rpay = 565000;
+    else if (r == 400)
+        rpay = 615000;
+
+    //하수도 요금
+    if (m >= 50){
+        lw = 30 * 360 + 20 * 850 + (m-50) * 1290;
+    }
+    else if (m >= 30){
+        lw = 30 * 360 + (m-30) * 850;
+    }
+    else{
+        lw = m * 360;
+    }
+        
+
+    //사용요금
+    if (m<30)
+        cost = m * 360 * h;
+    else if (m<=50)
+        cost = ((30*360)+(m-30)*550)*h;
+    else if (m>50)
+        cost = ((30*360)+(20*550)+(m-50)*790)*h;
+    
+    var su = Math.trunc((rpay + cost) / 10) *10; //상수도 요금
+    
+    var bear = Math.trunc((170 * m * h ) / 10) *10;   //이용부담금
+
+    
+    var totalPay = su + bear + lw;   //요금 총계
+    
+    // 월 사용량, 토탈 요금
+    // usage = 물사용량 ( m**3)
+    // total = 총 요금
+    // high = 상수도 요금
+    // low = 하수도 요금
+    // charge = 이용부담금
+    // caliber = 구경
+    var tax = {usage : m, total: totalPay,
+            high: su, low: lw, charge: bear, caliber: r};
+
+    // tax = JSON.stringify(tax);
+    response.json(totalPay); 
+
+    // print("월평균 사용량:",m,"m³입니다")
+    // print("상수도 요금:",int(su),"원 입니다")
+    // print("물이용부담금:",int(bear), "원 입니다")
+    // print("요금총계:",int(total),"원 입니다")
+});
