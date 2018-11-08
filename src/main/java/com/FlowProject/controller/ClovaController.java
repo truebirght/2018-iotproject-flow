@@ -18,6 +18,10 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseReference.CompletionListener;
+import com.google.firebase.database.FirebaseDatabase;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,13 +59,16 @@ public class ClovaController {
 				String stat = intent.path("slots").path("valveStatus").path("value").textValue();
 				ObjectNode value = (ObjectNode)rep.path("response").path("outputSpeech").path("values");
 				
-				boolean isOpen = stat.equals("open");
-				if(isOpen) {
-					RestTemplate template = new RestTemplate();
-					template.getForObject(
-							"https://us-central1-flow-3191.cloudfunctions.net/valveOnOff?port=23&status=" + (isOpen ? "on" : "off"), String.class);
-				}
-				
+				FirebaseDatabase db = FirebaseDatabase.getInstance();
+				DatabaseReference ref = db.getReference("/ControlData/23/lock");
+				ref.setValue(stat.equals("open") ? "on" : "off", new CompletionListener() {
+
+					@Override
+					public void onComplete(DatabaseError error, DatabaseReference ref) {
+						log.info("{}/{}",error,ref);
+					}
+					
+				});
 				
 				value.put("value", "벨브를" + ( stat.equals("open") ? "열었습니다": "잠궜습니다"));
 				break;
