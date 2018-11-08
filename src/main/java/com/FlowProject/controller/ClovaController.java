@@ -66,7 +66,7 @@ public class ClovaController {
 			//밸브 제어 인텐트
 			case "ValveControIntent":
 				String stat = intent.path("slots").path("valveStatus").path("value").textValue();
-				if(stat.equals("open") || stat.equals("lock")) {
+				if(stat != null && (stat.equals("open") || stat.equals("lock"))) {
 					FirebaseDatabase db = FirebaseDatabase.getInstance();
 					DatabaseReference ref = db.getReference("/ControlData/23/lock");
 					ref.setValue(stat.equals("open") ? "on" : "off", new CompletionListener() {
@@ -82,7 +82,6 @@ public class ClovaController {
 				}
 				break;
 			default:
-				spechText.put("value", "그건 제가 할수 없는일이네요.. 다른 일을 시켜보시겠어요?");
 			}
 			break;
 		}		
