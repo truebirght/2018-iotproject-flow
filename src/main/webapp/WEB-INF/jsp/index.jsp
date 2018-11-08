@@ -24,7 +24,7 @@
 
 
 <!-- Chartjs -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+<script type="text/javascript" src="/resources/js/Chart.js"></script>
 <script type="text/javascript" src="/resources/js/Chart.roundedBarCharts.min.js"></script>
 <script type="text/javascript" src="/resources/js/moment.js"></script>
 
@@ -75,9 +75,17 @@
 								<a class="m-brand__logo-wrapper"> <img alt="" src="/resources/img/logo.png"> <span id="logoText">&nbsp;Flow 온라인 수도 검침</span>
 								</a>
 							</div>
+							
+							
+							
 						</div>
 
 						<div class="m-stack m-stack--ver m-stack--general m-stack--inline right">
+							<div class="table-cell rightLabel">
+								<label class="checkbox-inline" for="toggleBtn" id="toggleLabel">밸브 상태</label>
+								<input type="checkbox" id="toggleBtn" class="checkbox-switch">
+							</div>
+							
 							<div class="table-cell">
 								<button id="btnLogout" class="btn btn-outline-metal m-btn  m-btn--icon m-btn--pill">Logout</button>
 							</div>
@@ -137,13 +145,6 @@
 								</div>
 
 								<div>
-									<label class="checkbox-inline" for="toggleBtn">밸브 상태</label>
-									<input type="checkbox" id="toggleBtn" class="checkbox-switch">
-									
-								</div>
-
-
-								<div>
 									<span class="m-subheader__daterange" id="m_dashboard_daterangepicker"> <span class="m-subheader__daterange-label"> <span class="m-subheader__daterange-title">Today:</span> <span class="m-subheader__daterange-date m--font-brand" id="printDate"></span>
 									</span> <a href="#" class="btn btn-sm btn-brand m-btn m-btn--icon m-btn--icon-only m-btn--custom m-btn--pill"> <i class="la la-angle-down"></i>
 									</a>
@@ -164,7 +165,7 @@
 												</div>
 
 												<div class="canvasDiv">
-													<canvas id="dailyChart" class="chartjsChart"></canvas>
+													<canvas id="dailyChart" class="chartjsChart" width="1200" height="500"></canvas>
 												</div>
 
 											</div>
@@ -181,7 +182,7 @@
 												<h3 class="m-widget14__title">선택 수도 사용량</h3>
 											</div>
 											<div class="canvasDiv">
-												<canvas id="selectChart" class="chartjsChart"></canvas>
+												<canvas id="selectChart" class="chartjsChart" width="1200" height="500"></canvas>
 											</div>
 										</div>
 									</div>
@@ -259,9 +260,8 @@ function addComma(num) {
 var selectDateDataKey = ${selectDateDataKey};
 
 var selectDateTotalTax = ${myTax}
-selectDateTotalTax = selectDateDataKey[0] + ' ~ ' + selectDateDataKey[selectDateDataKey.length - 1]
-	+ ' 사용 요금 : ' + addComma(selectDateTotalTax) + '원';
-
+var dateText = selectDateDataKey[0] + ' ~ ' + selectDateDataKey[selectDateDataKey.length - 1];
+var taxText = '사용 요금 : ' + addComma(selectDateTotalTax) + '원';
 /* 인증 상태 변화 감시하기 */
 var today = new Date();
 var getDay = 32 - new Date(today.getFullYear(), today.getMonth(), 32).getDate();
@@ -284,6 +284,7 @@ var keys;
 var checkList = [];
 var el = document.querySelector('.checkbox-switch');
 var mySwitch = new Switch(el, {
+	size: 'large',
 	checked: bool,
 	showText: true,
 	onText : 'O',
@@ -370,6 +371,7 @@ $(document).ready(function(){
 		},
 		options: {
 			responsive: true,
+			maintainAspectRatio: false,
 			barRoundness: 0,
             legend: {
                // onClick: (e) => e.stopPropagation()
@@ -379,6 +381,21 @@ $(document).ready(function(){
                 display: true,
                 fontSize: 22,
                 text: (today.getMonth() + 1) + '월 일간 사용량'
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                    	max: 31,
+                        min: 4,
+                        stepSize: 0.5
+                    }
+                }],
+                yAxes: [{
+                	ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 5
+                    }
+                }]
             }
 		}
 	});
@@ -397,6 +414,7 @@ $(document).ready(function(){
 		    },
 		    options: {
 				responsive: true,
+				maintainAspectRatio: false,
 				barRoundness: 0,
 	            legend: {
 	               // onClick: (e) => e.stopPropagation()
@@ -405,16 +423,25 @@ $(document).ready(function(){
 	            title: {
 	                display: true,
 	                fontSize: 22,
-	                text: selectDateTotalTax
+	                text: [dateText, taxText]
+	            },
+	            scales: {
+	                xAxes: [{
+	                    ticks: {
+	                    	max: 31,
+	                        min: 4,
+	                        stepSize: 0.5
+	                    }
+	                }],
+	                yAxes: [{
+	                	ticks: {
+	                        autoSkip: true,
+	                        maxTicksLimit: 5
+	                    }
+	                }]
 	            }
 			}
 		});
-	
-	
-	
-	
-	
-	
 </script>
 </body>
 </html>

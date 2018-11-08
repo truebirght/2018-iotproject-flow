@@ -141,13 +141,19 @@
          }
 
          .left {
-             width: 70% !important;
+             width: 30% !important;
              float: left;
          }
 
          .right {
              display: table !important;
-             width: 30% !important;
+             width: 70% !important;
+             text-align: right;
+         }
+
+         .rightLabel {
+             display: table !important;
+             width: 70% !important;
              text-align: right;
          }
 
@@ -165,8 +171,38 @@
              margin-right: 20px !important;
          }
 
+         #toggleLabel {
+             color: white !important;
+         }
+
          #indexForm {
             visibility:hidden !important;
             position:absolute;
-            z-index: -9999;
          }
+
+         .m-widget14 {
+             overflow-x: scroll !important;
+         }
+
+         .m-widget14::-webkit-scrollbar {
+             height: 10px;
+         }
+        
+         .m-widget14::-webkit-scrollbar-thumb {
+             background: #d0d0d0;
+             border-radius: 6px;
+         }
+         .m-widget14::-webkit-scrollbar-track {
+             background: transparent;
+             border-radius: 6px;
+         }
+             
+         .canvasDiv {
+             width: 1200px !important;
+             position: relative !important;
+         }
+
+        .canvasDiv > canvas {
+            left: 0 !important;
+            top: 0 !important;
+        }
