@@ -48,7 +48,7 @@ public class ClovaController {
 		ObjectNode rep = (ObjectNode)mapper.readTree(defaultRep);
 		String type = req.get("request").get("type").asText();
 		
-		if(type.equals("LaunchRequest") || req.path("session").path("new").asBoolean() == true){
+		if(type.equals("LaunchRequest")){
 			return defaultRep;
 		}
 		
